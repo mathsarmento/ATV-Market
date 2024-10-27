@@ -1,27 +1,33 @@
 #include <stdio.h>
 #include <string.h>
+#include <windows.h>
 
-// Estrutura para armazenar os dados de uma peca
 struct Peca {
     int codigo;
     char descricao[100];
     char marca[50];
     char aplicacao[100];
     float preco;
-    int quantidade; // A quantidade sera exibida apenas no terminal
+    int quantidade;
 };
 
-// Funcão para cadastrar uma peca e gravar em um arquivo.txt
+void loading() {
+    for (int i = 0; i < 100; i++) {
+        printf(".");
+        fflush(stdout);
+        Sleep(15);
+    }
+    printf("\n");
+}
+
 void cadastrarPeca() {
     struct Peca p;
-    int codigoExistente = 0; // Variável para verificar se o código já existe
+    int codigoExistente = 0;
 
-    // Leitura do código
-    do {
+   do {
         printf("Digite o codigo do item (Somente numeros): ");
         scanf("%d", &p.codigo);
 
-        // Abrir o arquivo para leitura e verificar se o código já existe
         FILE *arquivo = fopen("cadastro_pecas.txt", "r");
         if (arquivo == NULL) {
             printf("Erro ao abrir o arquivo!\n");
@@ -31,7 +37,6 @@ void cadastrarPeca() {
         struct Peca tempPeca;
         codigoExistente = 0;
 
-        // Verifica se o código já existe no arquivo
         while (fscanf(arquivo, "%d\n", &tempPeca.codigo) != EOF) {
             fscanf(arquivo, " %[^\n]", tempPeca.descricao);
             fscanf(arquivo, " %[^\n]", tempPeca.marca);
@@ -78,7 +83,6 @@ void cadastrarPeca() {
     printf("\nPeca cadastrada e gravada no arquivo com sucesso!\n");
 }
 
-// Funcão para alterar uma peca existente
 void alterarPeca() {
     int codigoAlvo;
     printf("Digite o codigo do item que deseja alterar: ");
@@ -167,11 +171,36 @@ void alterarPeca() {
     printf("\nPeca alterada e arquivo atualizado com sucesso!\n");
 }
 
-// Funcão para pesquisar uma peca pelo nome e exibir o preco e código
+void listarPecas() {
+    FILE *arquivo = fopen("cadastro_pecas.txt", "r");
+    if (arquivo == NULL) {
+        printf("Erro ao abrir o arquivo!\n");
+        return;
+    }
+
+    printf("\nLista de pecas cadastradas:\n");
+    printf("Codigo - Descricao\n");
+
+    struct Peca p;
+    while (fscanf(arquivo, "%d\n", &p.codigo) != EOF) {
+        fscanf(arquivo, " %[^\n]", p.descricao);
+        fscanf(arquivo, " %[^\n]", p.marca);
+        fscanf(arquivo, " %[^\n]", p.aplicacao);
+        fscanf(arquivo, "%d\n", &p.quantidade);
+        fscanf(arquivo, "%f\n", &p.preco);
+
+        printf("%d - %s \n", p.codigo, p.descricao);
+    }
+
+    fclose(arquivo);
+}
+
 void pesquisarPeca() {
-    char busca[100];
-    printf("Digite o nome ou descricao da peca que deseja buscar: ");
-    scanf(" %[^\n]", busca);
+    int busca;
+    listarPecas();
+
+    printf("Digite o codigo da peca que deseja buscar: ");
+    scanf("%d", &busca);
 
     FILE *arquivo = fopen("cadastro_pecas.txt", "r");
     if (arquivo == NULL) {
@@ -188,10 +217,12 @@ void pesquisarPeca() {
         fscanf(arquivo, "%d\n", &p.quantidade); 
         fscanf(arquivo, "%f\n", &p.preco);
 
-        if (strstr(p.descricao, busca) != NULL) {
+        if (p.codigo == busca) {
             encontrado = 1;
             printf("\nPeca encontrada:\nCodigo: %d\nDescricao: %s\nPreco: %.2f\nQuantidade: %d\n", p.codigo, p.descricao, p.preco, p.quantidade);
-            break; // Para a pesquisa após encontrar a primeira peca
+            loading();
+            
+            break;
         }
     }
 
@@ -201,8 +232,7 @@ void pesquisarPeca() {
         printf("\nPeca nao encontrada.\n");
     }
 }
-
-// Funcão para comprar uma peca
+// TODO CARRINHO DE COMPRA array e ponteiro 
 void comprarPeca() {
     char busca[100];
     printf("Digite o nome ou descricao da peca que deseja comprar: ");
@@ -229,7 +259,6 @@ void comprarPeca() {
 
     fclose(arquivo);
 
-    // Buscar pela peca
     for (int i = 0; i < totalPecas; i++) {
         if (strstr(pecas[i].descricao, busca) != NULL) {
             encontrado = 1;
@@ -243,7 +272,6 @@ void comprarPeca() {
             if (quantidadeDesejada > pecas[i].quantidade) {
                 printf("Quantidade insuficiente para compra!\n");
             } else {
-                // Calcular o valor total
                 float valorTotal = quantidadeDesejada * pecas[i].preco;
                 printf("Valor total da compra: %.2f\n", valorTotal);
                 
@@ -252,17 +280,16 @@ void comprarPeca() {
                 scanf(" %c", &confirmacao);
 
                 if (confirmacao == 's' || confirmacao == 'S') {
-                    pecas[i].quantidade -= quantidadeDesejada; // Diminui a quantidade
+                    pecas[i].quantidade -= quantidadeDesejada;
                     printf("Compra realizada com sucesso!");
                 } else {
                     printf("Compra cancelada.\n");
                 }
             }
-            break; // Para após encontrar a primeira peca correspondente
+            break;
         }
     }
 
-    // Reescreve o arquivo com as quantidades atualizadas
     arquivo = fopen("cadastro_pecas.txt", "w");
     if (arquivo == NULL) {
         printf("Erro ao abrir o arquivo!\n");
@@ -277,7 +304,6 @@ void comprarPeca() {
 }
 
 
-// Menu para o cliente
 void menuCliente() {
     int opcao;
     do {
@@ -300,7 +326,6 @@ void menuCliente() {
     } while (opcao != 0);
 }
 
-// Menu para o administrador
 void menuAdmin() {
     int opcao;
     do {
