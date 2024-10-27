@@ -12,11 +12,42 @@ struct Peca {
 
 void cadastrarPeca() {
     struct Peca p;
+    int codigoExistente = 0; // Variável para verificar se o código já existe
 
-    printf("Digite o codigo do item (Somente numeros): ");
-    scanf("%d", &p.codigo);
-    
+    // Leitura do código
+    do {
+        printf("Digite o codigo do item (Somente numeros): ");
+        scanf("%d", &p.codigo);
 
+        // Abrir o arquivo para leitura e verificar se o código já existe
+        FILE *arquivo = fopen("cadastro_pecas.txt", "r");
+        if (arquivo == NULL) {
+            printf("Erro ao abrir o arquivo!\n");
+            return;
+        }
+
+        struct Peca tempPeca;
+        codigoExistente = 0;
+
+        // Verifica se o código já existe no arquivo
+        while (fscanf(arquivo, "%d\n", &tempPeca.codigo) != EOF) {
+            fscanf(arquivo, " %[^\n]", tempPeca.descricao);
+            fscanf(arquivo, " %[^\n]", tempPeca.marca);
+            fscanf(arquivo, " %[^\n]", tempPeca.aplicacao);
+            fscanf(arquivo, "%d\n", &tempPeca.quantidade);
+            fscanf(arquivo, "%f\n", &tempPeca.preco);
+
+            if (tempPeca.codigo == p.codigo) {
+                codigoExistente = 1;
+                printf("Erro: Ja existe uma peca com o codigo %d. Tente novamente.\n", p.codigo);
+                break;
+            }
+        }
+
+        fclose(arquivo);
+    } while (codigoExistente);
+
+    // Se o código for único, proceder com o cadastro
     printf("Digite a descricao da peca: ");
     scanf(" %[^\n]", p.descricao);
 
@@ -32,6 +63,7 @@ void cadastrarPeca() {
     printf("Digite o preco: ");
     scanf("%f", &p.preco);
 
+    // Gravar os dados da peça no arquivo
     FILE *arquivo = fopen("cadastro_pecas.txt", "a");
     if (arquivo == NULL) {
         printf("Erro ao abrir o arquivo!\n");
