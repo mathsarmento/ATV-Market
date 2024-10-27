@@ -10,3 +10,9 @@ adidas
 carro
 10
 50232.00
+3
+placa
+audio 
+traseira
+10
+100.00
