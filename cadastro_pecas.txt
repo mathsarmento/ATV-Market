@@ -1,0 +1,12 @@
+1
+banco vermelho
+nike
+carro
+132
+1220.30
+2
+banco azul 
+adidas
+carro
+10
+50232.00

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <windows.h>
 
 struct Peca {
     int codigo;
@@ -10,16 +11,23 @@ struct Peca {
     int quantidade;
 };
 
+void loading() {
+    for (int i = 0; i < 100; i++) {
+        printf(".");
+        fflush(stdout);
+        Sleep(15);
+    }
+    printf("\n");
+}
+
 void cadastrarPeca() {
     struct Peca p;
-    int codigoExistente = 0; // Variável para verificar se o código já existe
+    int codigoExistente = 0;
 
-    // Leitura do código
-    do {
+   do {
         printf("Digite o codigo do item (Somente numeros): ");
         scanf("%d", &p.codigo);
 
-        // Abrir o arquivo para leitura e verificar se o código já existe
         FILE *arquivo = fopen("cadastro_pecas.txt", "r");
         if (arquivo == NULL) {
             printf("Erro ao abrir o arquivo!\n");
@@ -29,7 +37,6 @@ void cadastrarPeca() {
         struct Peca tempPeca;
         codigoExistente = 0;
 
-        // Verifica se o código já existe no arquivo
         while (fscanf(arquivo, "%d\n", &tempPeca.codigo) != EOF) {
             fscanf(arquivo, " %[^\n]", tempPeca.descricao);
             fscanf(arquivo, " %[^\n]", tempPeca.marca);
@@ -182,7 +189,7 @@ void listarPecas() {
         fscanf(arquivo, "%d\n", &p.quantidade);
         fscanf(arquivo, "%f\n", &p.preco);
 
-        printf("%d - %s \n");
+        printf("%d - %s \n", p.codigo, p.descricao);
     }
 
     fclose(arquivo);
@@ -193,7 +200,7 @@ void pesquisarPeca() {
     listarPecas();
 
     printf("Digite o codigo da peca que deseja buscar: ");
-    scanf(" %d", busca);
+    scanf("%d", &busca);
 
     FILE *arquivo = fopen("cadastro_pecas.txt", "r");
     if (arquivo == NULL) {
@@ -213,6 +220,8 @@ void pesquisarPeca() {
         if (p.codigo == busca) {
             encontrado = 1;
             printf("\nPeca encontrada:\nCodigo: %d\nDescricao: %s\nPreco: %.2f\nQuantidade: %d\n", p.codigo, p.descricao, p.preco, p.quantidade);
+            loading();
+            
             break;
         }
     }
@@ -223,7 +232,7 @@ void pesquisarPeca() {
         printf("\nPeca nao encontrada.\n");
     }
 }
-
+// TODO CARRINHO DE COMPRA array e ponteiro 
 void comprarPeca() {
     char busca[100];
     printf("Digite o nome ou descricao da peca que deseja comprar: ");
