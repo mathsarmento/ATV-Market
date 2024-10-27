@@ -1,27 +1,28 @@
 #include <stdio.h>
 #include <string.h>
 
-// Estrutura para armazenar os dados de uma peça
+// Estrutura para armazenar os dados de uma peca
 struct Peca {
     int codigo;
     char descricao[100];
     char marca[50];
     char aplicacao[100];
     float preco;
-    int quantidade; // A quantidade será exibida apenas no terminal
+    int quantidade; // A quantidade sera exibida apenas no terminal
 };
 
-// Função para cadastrar uma peça e gravar em um arquivo.txt
+// Funcão para cadastrar uma peca e gravar em um arquivo.txt
 void cadastrarPeca() {
     struct Peca p;
 
-    printf("Digite o codigo do item: ");
+    printf("Digite o codigo do item (Somente numeros): ");
     scanf("%d", &p.codigo);
     
+
     printf("Digite a descricao da peca: ");
     scanf(" %[^\n]", p.descricao);
 
-    printf("Digite a marca da peça: ");
+    printf("Digite a marca da peca: ");
     scanf(" %[^\n]", p.marca);
 
     printf("Digite a aplicacao da peca: ");
@@ -45,7 +46,7 @@ void cadastrarPeca() {
     printf("\nPeca cadastrada e gravada no arquivo com sucesso!\n");
 }
 
-// Função para alterar uma peça existente
+// Funcão para alterar uma peca existente
 void alterarPeca() {
     int codigoAlvo;
     printf("Digite o codigo do item que deseja alterar: ");
@@ -134,7 +135,7 @@ void alterarPeca() {
     printf("\nPeca alterada e arquivo atualizado com sucesso!\n");
 }
 
-// Função para pesquisar uma peça pelo nome e exibir o preço e código
+// Funcão para pesquisar uma peca pelo nome e exibir o preco e código
 void pesquisarPeca() {
     char busca[100];
     printf("Digite o nome ou descricao da peca que deseja buscar: ");
@@ -158,7 +159,7 @@ void pesquisarPeca() {
         if (strstr(p.descricao, busca) != NULL) {
             encontrado = 1;
             printf("\nPeca encontrada:\nCodigo: %d\nDescricao: %s\nPreco: %.2f\nQuantidade: %d\n", p.codigo, p.descricao, p.preco, p.quantidade);
-            break; // Para a pesquisa após encontrar a primeira peça
+            break; // Para a pesquisa após encontrar a primeira peca
         }
     }
 
@@ -169,7 +170,7 @@ void pesquisarPeca() {
     }
 }
 
-// Função para comprar uma peça
+// Funcão para comprar uma peca
 void comprarPeca() {
     char busca[100];
     printf("Digite o nome ou descricao da peca que deseja comprar: ");
@@ -196,7 +197,7 @@ void comprarPeca() {
 
     fclose(arquivo);
 
-    // Buscar pela peça
+    // Buscar pela peca
     for (int i = 0; i < totalPecas; i++) {
         if (strstr(pecas[i].descricao, busca) != NULL) {
             encontrado = 1;
@@ -225,7 +226,7 @@ void comprarPeca() {
                     printf("Compra cancelada.\n");
                 }
             }
-            break; // Para após encontrar a primeira peça correspondente
+            break; // Para após encontrar a primeira peca correspondente
         }
     }
 
@@ -288,7 +289,7 @@ void menuAdmin() {
                 printf("Saindo...\n");
                 break;
             default:
-                printf("Opção invalida!\n");
+                printf("Opcão invalida!\n");
         }
     } while (opcao != 0);
 }
@@ -297,7 +298,7 @@ int main() {
     int escolha;
 
     do {
-        printf("Escolha o tipo de usuário:\n1. Admin\n2. Cliente\n0. Sair\nOpcao: ");
+        printf("Escolha o tipo de usuario:\n1. Admin\n2. Cliente\n0. Sair\nOpcao: ");
         scanf("%d", &escolha);
 
         if (escolha == 1) {
@@ -316,7 +317,7 @@ int main() {
                     if (tentativas > 0) {
                         printf("Senha incorreta! Tente novamente. Tentativas restantes: %d\n", tentativas);
                     } else {
-                        printf("Número máximo de tentativas alcancado.\n");
+                        printf("Numero maximo de tentativas alcancado.\n");
                     }
                 }
             }
@@ -325,7 +326,7 @@ int main() {
         } else if (escolha == 0) {
             printf("Saindo do programa...\n");
         } else {
-            printf("Opção inválida! Tente novamente.\n");
+            printf("Opcão invalida! Tente novamente.\n");
         }
 
     } while (escolha != 0);
