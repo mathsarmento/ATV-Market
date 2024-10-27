@@ -11,6 +11,13 @@ struct Peca {
     int quantidade;
 };
 
+struct Cliente {
+    char nome[100];
+    char endereco[100];
+    char telefone[15];
+    char email[100];
+};
+
 void loading() {
     for (int i = 0; i < 100; i++) {
         printf(".");
@@ -171,6 +178,85 @@ void alterarPeca() {
     printf("\nPeca alterada e arquivo atualizado com sucesso!\n");
 }
 
+void cadastrarCliente() {
+    struct Cliente c;
+    FILE *arquivo = fopen("cadastro_clientes.bin", "ab");
+    
+    if (arquivo == NULL) {
+        printf("Erro ao abrir o arquivo!\n");
+        return;
+    }
+
+    printf("Digite o nome do cliente: ");
+    scanf(" %[^\n]", c.nome);
+    
+    printf("Digite o endereco do cliente: ");
+    scanf(" %[^\n]", c.endereco);
+    
+    printf("Digite o telefone do cliente: ");
+    scanf(" %[^\n]", c.telefone);
+    
+    printf("Digite o email do cliente: ");
+    scanf(" %[^\n]", c.email);
+
+    fwrite(&c, sizeof(struct Cliente), 1, arquivo);
+    fclose(arquivo);
+
+    printf("Cliente cadastrado com sucesso!\n");
+}
+
+void alterarCliente() {
+    char nomeBusca[100];
+    int encontrado = 0;
+
+    printf("Digite o nome do cliente que deseja alterar: ");
+    scanf(" %[^\n]", nomeBusca);
+
+    FILE *arquivo = fopen("cadastro_clientes.bin", "rb+");
+    if (arquivo == NULL) {
+        printf("Erro ao abrir o arquivo!\n");
+        return;
+    }
+
+    struct Cliente c;
+    long posicao;
+
+    while (fread(&c, sizeof(struct Cliente), 1, arquivo)) {
+        if (strcmp(c.nome, nomeBusca) == 0) {
+            encontrado = 1;
+            printf("Cliente encontrado!\n");
+            printf("Nome: %s\nEndereco: %s\nTelefone: %s\nEmail: %s\n", c.nome, c.endereco, c.telefone, c.email);
+
+            printf("\nDigite os novos dados:\n");
+            printf("Digite o novo nome: ");
+            scanf(" %[^\n]", c.nome);
+
+            printf("Digite o novo endereco: ");
+            scanf(" %[^\n]", c.endereco);
+
+            printf("Digite o novo telefone: ");
+            scanf(" %[^\n]", c.telefone);
+
+            printf("Digite o novo email: ");
+            scanf(" %[^\n]", c.email);
+
+            // Salvar a posição atual para sobrescrever o cliente
+            posicao = ftell(arquivo) - sizeof(struct Cliente);
+            fseek(arquivo, posicao, SEEK_SET);
+            fwrite(&c, sizeof(struct Cliente), 1, arquivo);
+
+            printf("Dados do cliente alterados com sucesso!\n");
+            break;
+        }
+    }
+
+    if (!encontrado) {
+        printf("Cliente nao encontrado.\n");
+    }
+
+    fclose(arquivo);
+}
+
 void listarPecas() {
     FILE *arquivo = fopen("cadastro_pecas.txt", "r");
     if (arquivo == NULL) {
@@ -303,7 +389,6 @@ void comprarPeca() {
     fclose(arquivo);
 }
 
-
 void menuCliente() {
     int opcao;
     do {
@@ -329,7 +414,7 @@ void menuCliente() {
 void menuAdmin() {
     int opcao;
     do {
-        printf("\nMenu Admin\n1. Cadastrar Peca\n2. Alterar Peca\n3. Pesquisar Peca\n0. Sair\nOpcao: ");
+        printf("\nMenu Admin\n1. Cadastrar Peca\n2. Alterar Peca\n3. Pesquisar Peca\n4. Cadastrar Cliente\n5. Alterar Cliente\n0. Sair\nOpcao: ");
         scanf("%d", &opcao);
 
         switch (opcao) {
@@ -342,11 +427,17 @@ void menuAdmin() {
             case 3:
                 pesquisarPeca();
                 break;
+            case 4:
+                cadastrarCliente();
+                break;
+            case 5:
+                alterarCliente();
+                break;
             case 0:
                 printf("Saindo...\n");
                 break;
             default:
-                printf("Opcão invalida!\n");
+                printf("Opcao invalida!\n");
         }
     } while (opcao != 0);
 }
