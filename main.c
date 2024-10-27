@@ -135,10 +135,36 @@ void alterarPeca() {
     printf("\nPeca alterada e arquivo atualizado com sucesso!\n");
 }
 
+void listarPecas() {
+    FILE *arquivo = fopen("cadastro_pecas.txt", "r");
+    if (arquivo == NULL) {
+        printf("Erro ao abrir o arquivo!\n");
+        return;
+    }
+
+    printf("\nLista de pecas cadastradas:\n");
+    printf("Codigo - Descricao\n");
+
+    struct Peca p;
+    while (fscanf(arquivo, "%d\n", &p.codigo) != EOF) {
+        fscanf(arquivo, " %[^\n]", p.descricao);
+        fscanf(arquivo, " %[^\n]", p.marca);
+        fscanf(arquivo, " %[^\n]", p.aplicacao);
+        fscanf(arquivo, "%d\n", &p.quantidade);
+        fscanf(arquivo, "%f\n", &p.preco);
+
+        printf("%d - %s \n");
+    }
+
+    fclose(arquivo);
+}
+
 // Funcão para pesquisar uma peca pelo nome e exibir o preco e código
 void pesquisarPeca() {
     char busca[100];
-    printf("Digite o nome ou descricao da peca que deseja buscar: ");
+    listarPecas();
+
+    printf("Digite o codigo da peca que deseja buscar: ");
     scanf(" %[^\n]", busca);
 
     FILE *arquivo = fopen("cadastro_pecas.txt", "r");
